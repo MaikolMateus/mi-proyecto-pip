@@ -1,0 +1,13 @@
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.ipynb
+.ipynb_checkpoints/
+sp500_historico.csv
+*.csv
+outputs/
+figures/
+*.png
+.DS_Store
