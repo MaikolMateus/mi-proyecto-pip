@@ -1,4 +1,4 @@
-# 📈 Predicción de Volatilidad en el S&P 500 mediante PCA, Clustering, ARIMA-GARCH y LSTM
+#  Predicción de Volatilidad en el S&P 500 mediante PCA, Clustering, ARIMA-GARCH y LSTM
 
 Este proyecto desarrolla una metodología para el análisis y predicción de volatilidad en acciones del índice S&P 500 utilizando técnicas de reducción de dimensión, aprendizaje no supervisado, modelos econométricos y redes neuronales profundas.
 
@@ -200,11 +200,11 @@ Los modelos fueron comparados utilizando:
 - RMSE (Root Mean Squared Error)
 - MAE (Mean Absolute Error)
 
-| Modelo | RMSE | MAE |
-|----------|----------|----------|
-| GARCH | Pendiente | Pendiente |
-| ARIMA-GARCH | Pendiente | Pendiente |
-| LSTM | Pendiente | Pendiente |
+| Modelo | 
+|----------|
+| GARCH | 
+| ARIMA-GARCH | 
+| LSTM | 
 
 El mejor modelo será seleccionado con base en su capacidad predictiva sobre datos no observados.
 
