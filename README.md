@@ -147,7 +147,8 @@ Se ajustaron los siguientes modelos:
 ---
 
 # Estructura del Proyecto
-
+## Workflow
+Ver diagrama: [workflow_sp500.html](https://MaikolMateus.github.io/mi-proyecto-pip/workflow_sp500.html)
 ```text
 sp500-volatility/
 │
