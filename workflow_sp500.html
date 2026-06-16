@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workflow — Base de datos S&P 500</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: #e6edf3;
+  }
+
+  header p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #7d8590;
+  }
+
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  /* ── Block ── */
+  .block {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #30363d;
+    background: #161b22;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .block:hover {
+    border-color: #58a6ff;
+    box-shadow: 0 0 0 3px rgba(88,166,255,0.08);
+  }
+
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px 12px;
+  }
+
+  .badge {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+
+  .block-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e6edf3;
+  }
+
+  /* ── Sub-items ── */
+  .block-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 18px 14px;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid transparent;
+  }
+
+  /* ── Connector ── */
+  .connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 0;
+  }
+
+  .connector-line {
+    width: 1.5px;
+    height: 20px;
+    background: #30363d;
+  }
+
+  .connector-label {
+    font-size: 10px;
+    color: #7d8590;
+    background: #0d1117;
+    padding: 0 6px;
+    border-radius: 4px;
+    border: 1px solid #30363d;
+    white-space: nowrap;
+  }
+
+  .connector-arrow {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #30363d;
+  }
+
+  /* ── Color themes per block ── */
+  /* 1 teal */
+  .b1 { border-color: #1f6feb33; }
+  .b1:hover { border-color: #1f6feb; box-shadow: 0 0 0 3px rgba(31,111,235,0.08); }
+  .b1 .badge { background: #1f2d45; color: #58a6ff; }
+  .b1 .tag  { background: #1f2d45; color: #79c0ff; border-color: #1f6feb44; }
+
+  /* 2 gray */
+  .b2 { border-color: #30363d; }
+  .b2 .badge { background: #21262d; color: #8b949e; }
+  .b2 .tag  { background: #21262d; color: #adbac7; border-color: #30363d; }
+
+  /* 3 purple */
+  .b3 { border-color: #6e40c933; }
+  .b3:hover { border-color: #8957e5; box-shadow: 0 0 0 3px rgba(137,87,229,0.08); }
+  .b3 .badge { background: #271d40; color: #bc8cff; }
+  .b3 .tag  { background: #271d40; color: #d2a8ff; border-color: #6e40c944; }
+
+  /* 4 amber */
+  .b4 { border-color: #9e6a0333; }
+  .b4:hover { border-color: #d29922; box-shadow: 0 0 0 3px rgba(210,153,34,0.08); }
+  .b4 .badge { background: #2d2000; color: #e3b341; }
+  .b4 .tag  { background: #2d2000; color: #f0c040; border-color: #9e6a0344; }
+
+  /* 5 coral */
+  .b5 { border-color: #b7272733; }
+  .b5:hover { border-color: #f85149; box-shadow: 0 0 0 3px rgba(248,81,73,0.08); }
+  .b5 .badge { background: #2d1a1a; color: #ff7b72; }
+  .b5 .tag  { background: #2d1a1a; color: #ffa198; border-color: #b7272744; }
+
+  /* 6 green */
+  .b6 { border-color: #1a7f3733; }
+  .b6:hover { border-color: #3fb950; box-shadow: 0 0 0 3px rgba(63,185,80,0.08); }
+  .b6 .badge { background: #12261e; color: #56d364; }
+  .b6 .tag  { background: #12261e; color: #7ee787; border-color: #1a7f3744; }
+
+  footer {
+    margin-top: 48px;
+    font-size: 11px;
+    color: #484f58;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Workflow · Base de datos S&P 500</h1>
+  <p>Pipeline de análisis financiero — Python / Google Colab</p>
+</header>
+
+<div class="flow">
+
+  <!-- 1 -->
+  <div class="block b1">
+    <div class="block-header">
+      <div class="badge">1</div>
+      <span class="block-title">Extracción de datos</span>
+    </div>
+    <div class="block-body">
+      <span class="tag">Wikipedia → lista de tickers</span>
+      <span class="tag">yfinance → precios históricos</span>
+      <span class="tag">requests + pandas</span>
+    </div>
+  </div>
+
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">DataFrame de cierres ajustados</div>
+    <div class="connector-line"></div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="block b2">
+    <div class="block-header">
+      <div class="badge">2</div>
+      <span class="block-title">Limpieza y normalización</span>
+    </div>
+    <div class="block-body">
+      <span class="tag">Eliminar nulos</span>
+      <span class="tag">Retornos logarítmicos</span>
+      <span class="tag">Exportar CSV</span>
+    </div>
+  </div>
+
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">Retornos diarios limpios</div>
+    <div class="connector-line"></div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="block b3">
+    <div class="block-header">
+      <div class="badge">3</div>
+      <span class="block-title">Análisis estadístico</span>
+    </div>
+    <div class="block-body">
+      <span class="tag">Distribución normal (scipy)</span>
+      <span class="tag">KDE y outliers</span>
+      <span class="tag">Matriz de correlación</span>
+      <span class="tag">Heatmap seaborn</span>
+    </div>
+  </div>
+
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">Features por acción (mean, std, skew, kurt)</div>
+    <div class="connector-line"></div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="block b4">
+    <div class="block-header">
+      <div class="badge">4</div>
+      <span class="block-title">Clustering</span>
+    </div>
+    <div class="block-body">
+      <span class="tag">StandardScaler</span>
+      <span class="tag">KMeans (k=4)</span>
+      <span class="tag">Dendrograma Ward</span>
+      <span class="tag">PCA 2D</span>
+    </div>
+  </div>
+
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">Serie temporal AAPL</div>
+    <div class="connector-line"></div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="block b5">
+    <div class="block-header">
+      <div class="badge">5</div>
+      <span class="block-title">Análisis de tendencia</span>
+    </div>
+    <div class="block-body">
+      <span class="tag">Descomposición estacional (statsmodels)</span>
+      <span class="tag">Regresión lineal (sklearn)</span>
+      <span class="tag">Periodo = 252 días</span>
+    </div>
+  </div>
+
+  <div class="connector">
+    <div class="connector-line"></div>
+    <div class="connector-label">Resultados y visualizaciones</div>
+    <div class="connector-line"></div>
+    <div class="connector-arrow"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="block b6">
+    <div class="block-header">
+      <div class="badge">6</div>
+      <span class="block-title">Exportación</span>
+    </div>
+    <div class="block-body">
+      <span class="tag">sp500_historico.csv</span>
+      <span class="tag">Gráficas matplotlib</span>
+      <span class="tag">requirements.txt</span>
+      <span class="tag">google.colab files.download()</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>Base_de_datos_S_P_500.ipynb · generado con Claude</footer>
+
+</body>
+</html>
